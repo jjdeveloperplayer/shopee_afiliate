@@ -127,7 +127,6 @@ class ShopeeAPIService:
 
             # CRÍTICO: Remover quebras de linha MAS manter espaços
             # Substitui múltiplos espaços por um único espaço
-            import re
             query_clean = re.sub(r'\s+', ' ', query).strip()
             payload_dict = {"query": query_clean}
 
@@ -170,21 +169,30 @@ class ShopeeAPIService:
         Gera link de afiliado curto usando a API da Shopee
         """
         try:
+            # Se não fornecido, usa padrão simples sem caracteres especiais
             if sub_ids is None:
-                # Usa apenas o primeiro sub_id, deixa os outros vazios mas não envia
-                sub_ids = ["promo_generator"]
+                sub_ids = ["promo", "", "", "", ""]  # Sempre 5 sub_ids conforme docs
 
-            # Remove strings vazias da lista
-            sub_ids_clean = [sid for sid in sub_ids if sid and sid.strip()]
-
-            # Se não tiver nenhum sub_id válido, usa um padrão
-            if not sub_ids_clean:
-                sub_ids_clean = ["promo"]
+            # Garante que tenha exatamente 5 sub_ids (preenche com vazios se necessário)
+            while len(sub_ids) < 5:
+                sub_ids.append("")
 
             # Limita a 5 sub_ids
-            sub_ids_clean = sub_ids_clean[:5]
+            sub_ids = sub_ids[:5]
 
-            # Monta a query com os sub_ids válidos
+            # Valida e limpa os sub_ids (remove caracteres especiais, mantém só alfanuméricos)
+            sub_ids_clean = []
+            for sid in sub_ids:
+                if sid:
+                    # Remove caracteres especiais, mantém só letras, números e hífen
+                    clean = re.sub(r'[^a-zA-Z0-9-]', '', str(sid))
+                    # Limita a 50 caracteres
+                    clean = clean[:50] if clean else ""
+                    sub_ids_clean.append(clean)
+                else:
+                    sub_ids_clean.append("")
+
+            # Monta a query com os sub_ids (sempre 5, mesmo que vazios)
             sub_ids_str = ','.join([f'"{sid}"' for sid in sub_ids_clean])
 
             query = """mutation {
@@ -197,7 +205,6 @@ class ShopeeAPIService:
 }""" % (product_url, sub_ids_str)
 
             # CRÍTICO: Remover quebras de linha MAS manter espaços
-            import re
             query_clean = re.sub(r'\s+', ' ', query).strip()
             payload_dict = {"query": query_clean}
 
