@@ -1,0 +1,139 @@
+{% extends 'promo_generator/base.html' %}
+
+{% block title %}Gerador de Promoções Shopee{% endblock %}
+
+{% block content %}
+<div class="row justify-content-center">
+    <div class="col-lg-8">
+        <!-- Hero Section -->
+        <div class="text-center mb-5">
+            <h1 class="display-4 fw-bold mb-3">
+                🚀 Crie Promoções Incríveis!
+            </h1>
+            <p class="lead text-muted">
+                Transforme links da Shopee em materiais promocionais profissionais 
+                com IA em segundos!
+            </p>
+        </div>
+
+        <!-- Form Card -->
+        <div class="card mb-5">
+            <div class="card-body p-4">
+                <h3 class="card-title mb-4">
+                    <i class="fas fa-link text-primary"></i> Cole o Link do Produto
+                </h3>
+                
+                <form method="post" action="{% url 'home' %}">
+                    {% csrf_token %}
+                    
+                    <div class="mb-3">
+                        {{ form.product_url }}
+                        <div class="form-text">
+                            {{ form.product_url.help_text }}
+                        </div>
+                    </div>
+                    
+                    <div class="d-grid gap-2">
+                        <button type="submit" class="btn btn-shopee btn-lg">
+                            <i class="fas fa-magic"></i> Gerar Material Promocional
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+
+        <!-- Features -->
+        <div class="row g-4 mb-5">
+            <div class="col-md-4">
+                <div class="card text-center h-100">
+                    <div class="card-body">
+                        <i class="fas fa-image fa-3x text-primary mb-3"></i>
+                        <h5 class="card-title">Arte Automática</h5>
+                        <p class="card-text text-muted">
+                            Imagens promocionais atrativas geradas automaticamente
+                        </p>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="card text-center h-100">
+                    <div class="card-body">
+                        <i class="fas fa-robot fa-3x text-success mb-3"></i>
+                        <h5 class="card-title">Texto com IA</h5>
+                        <p class="card-text text-muted">
+                            Descrições persuasivas criadas por inteligência artificial
+                        </p>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="card text-center h-100">
+                    <div class="card-body">
+                        <i class="fas fa-copy fa-3x text-warning mb-3"></i>
+                        <h5 class="card-title">Copiar Fácil</h5>
+                        <p class="card-text text-muted">
+                            Copie texto e baixe imagem com um clique
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Recent Promos -->
+        {% if recent_promos %}
+        <div class="mb-5">
+            <h3 class="mb-4">
+                <i class="fas fa-clock text-info"></i> Promoções Recentes
+            </h3>
+            <div class="row g-3">
+                {% for promo in recent_promos %}
+                <div class="col-md-4">
+                    <div class="card promo-card h-100">
+                        <img src="{{ promo.promo_image.url }}" 
+                             class="card-img-top" 
+                             alt="{{ promo.product_name }}"
+                             style="height: 200px; object-fit: cover;">
+                        <div class="card-body">
+                            <h6 class="card-title text-truncate">
+                                {{ promo.product_name }}
+                            </h6>
+                            <p class="text-muted small mb-2">
+                                <i class="fas fa-eye"></i> {{ promo.views }} visualizações
+                            </p>
+                            <a href="{% url 'promo_detail' promo.id %}" 
+                               class="btn btn-sm btn-outline-primary w-100">
+                                Ver Detalhes
+                            </a>
+                        </div>
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+        </div>
+        {% endif %}
+
+        <!-- How it works -->
+        <div class="card bg-light">
+            <div class="card-body">
+                <h4 class="card-title mb-4">
+                    <i class="fas fa-question-circle"></i> Como Funciona?
+                </h4>
+                <ol class="mb-0">
+                    <li class="mb-2">
+                        <strong>Cole o link</strong> do produto da Shopee que você quer promover
+                    </li>
+                    <li class="mb-2">
+                        <strong>Aguarde</strong> enquanto a IA gera a imagem e o texto promocional
+                    </li>
+                    <li class="mb-2">
+                        <strong>Copie o texto</strong> e <strong>baixe a imagem</strong> gerados
+                    </li>
+                    <li class="mb-0">
+                        <strong>Compartilhe</strong> nas suas redes sociais e comece a lucrar!
+                    </li>
+                </ol>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
